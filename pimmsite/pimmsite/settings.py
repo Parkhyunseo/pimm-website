@@ -42,10 +42,13 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.humanize',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    #sites 모듈을 사용시 SITE_ID를 지정해줘야한다.
+    'django.contrib.sites',
     'imagekit',
     
     'main',
@@ -117,6 +120,20 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# allauth 설정추가
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    #'allauth.account.auth_backends.AuthenticationBackend',  # 추가
+]
+
+SITE_ID = 1
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True
+SOCIALACCOUNT_ADAPTER = 'accounts.my_adapter.MyAdapter'
+# allauth 회원가입 form 오버라이딩 설정
+# ACCOUNT_SIGNUP_FORM_CLASS = 'accounts.forms.SocialSignupForm'
+# SOCIALACCOUNT_AUTO_SIGNUP = False
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

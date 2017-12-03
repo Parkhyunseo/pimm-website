@@ -127,3 +127,8 @@ def post_like_toggle(request, post_pk):
         return redirect(next_path)
         
     return redirect('imagebook:post_detail', post_pk=post_pk)
+    
+@login_required
+def my_profile(request, user_id):
+    pass
+    

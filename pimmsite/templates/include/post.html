@@ -1,4 +1,33 @@
-<div class="panel panel-default post-item">
+{% load humanize %}
+{% load static %}
+<article class="post-wrap">
+	<!-- TODO -->
+	<header>
+		<a class="user-title">
+		{% if post.author.img_profile %}
+    	<img class="user-pic" src="{{ post.author.img_profile.url }}" alt="프로필사진">
+		{% else %}
+	    <img class="user-pic" src="{% static 'img/default/default.jpg' %}" alt="프로필사진">
+	    {% endif %}
+	    <span class="post-username">{{ post.author.username  }}</span>
+	    </a>
+	    {% if post.author == user %}
+	    <span class=pull-right>
+	      <a class="post-edit" href="{% url "imagebook:post_detail" post.pk %}">수정</a>
+	      <form class="post-delete-form" method="post">
+	        {% csrf_token %}
+	        <input class="post-delete" type="submit" value="삭제" onclick="return confirm('정말 삭제하시겠습니까?')">
+	      </form>
+	    </span>
+	    {% endif %}
+	</header>
+	<div class="post-content">
+    {% if user in post.like_posts.all %}
+    	<input type="button" class="like liked" name="{{ post.id }}">
+    {% else %}
+    	<input type="button" class="like to-like" name="{{ post.id }}">
+    {% endif %}
+    <input type="button" class="commnet-icon" name="{{ post.id }}">
 	<img src="{{ post.photo.url }}" alt="" class="post-image">
 	<div class="panel-body">
 		<div class="btn-container">
@@ -46,17 +75,36 @@
 		{% endwith %}
 		
 		{% if post.comment_set.exists %}
-		<ul class="comment-list">
-			{% for comment in post.comment_set.all %}
-			<li class="comment">
-				<span class="comment-author">{{ comment.author }}</span>
-				<span class="comment-content">{{ comment.content }}</span>
-			</li>
-			{% endfor %}
-		</ul>
-		<hr>
+		{% if post.comment_set.all.count > 4 %}
+    	<input type="button" class="comment-more" name="{{ post.id }}" value="댓글 더 보기">
+    	{% endif %}
+        <div id="comment-list-ajax-post{{post.id}}"></div>
+        {% for comment in post.comment_set.all|slice:":4" %}	
+    	<div id="comment{{ comment.id }}">
+
+      		<span class="comment-username">{{ comment.author }}</span> {{ comment.content }}
+      		{% if user == comment.author %}
+      		<input type="button" class="del-comment" value="삭제" name="{{ comment.id }}">
+		    {% endif %}
+		</div>
+		{% endfor %}
 		{% endif %}
-			
+		
+		 <div id="comment-more-{{post.id}}"></div>
+
+	    <div class="time">
+	    {{ post.created_at|naturaltime }}
+	    </div>
+	    <div id="add-comment-post{{post.id}}" class="add-comment-wrap">
+	    {% if user.is_authenticated %}
+	      {{ comment_form }}
+	      <input type="button" class="add-comment add-comment-btn" name="{{ post.id }}" value="게시">
+	    {% else %}
+	      {{ comment_form }}
+	      <input type="button" class="add-comment-btn" name="{{ post.id }}" value="게시" onclick="alert('댓글을 작성하려면 로그인이 필요합니다.')">
+	    {% endif %}
+	    </div>
+		<!--
 		<form action="{% url 'imagebook:comment_create' post_pk=post.pk %}
 			?next=
 			{% if post_type == 'list' %}
@@ -68,5 +116,6 @@
 			{% csrf_token %}
 			{{ comment_form.content }}
 		</form>
+		-->
 	</div>
 </div>

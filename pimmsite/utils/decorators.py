@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required as django_login_requir
 from django.contrib.auth.views import redirect_to_login
 from django.core.handlers.wsgi import WSGIRequest
 
-
 def login_required(view_func):
     @wraps(view_func)
     def decorator(*args, **kwargs):

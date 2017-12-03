@@ -7,7 +7,7 @@ from .models import Comment, Post
 # 모델 클래스의 필드가 가진 유효성 검증도 자동으로 수행한다.
 
 class PostForm(forms.ModelForm):
-    
+    photo = forms.ImageField(label='', required=False)    
     class Meta:
         model = Post
         fields = (
@@ -15,22 +15,15 @@ class PostForm(forms.ModelForm):
         )
 
 class CommentForm(forms.ModelForm):
-    
+    content = forms.CharField(label='', widget=forms.TextInput(attrs={
+        'class': 'comment-form',
+        'size': '70px',
+        'placeholder': '댓글 달기...',
+        'maxlength': '40', }))
+
     class Meta:
         model = Comment
-        fields = (
-            'content',    
-        )
-        widget = {
-            'content': forms.TextInput(
-                attrs={
-                    'class': 'content',
-                    'placeholder': '댓글 달기...',
-                    #'size':'70px',
-                    #'maxlength':'40',
-                }    
-            )
-        }
+        fields = ['content']
     
     def clean_content(self):
         data = self.cleaned_data['content']
